@@ -5,6 +5,7 @@ const Answers = document.querySelectorAll('.Answer');
 const show_frame = document.querySelector('.show_result');
 const print_result = document.getElementById('print_result');
 const Reset = document.querySelector(".Reset");
+
 let questions = [
     {
         question: "Number of primitive data types in Java are?",
@@ -29,36 +30,32 @@ let questions = [
         C: "Long to Int",
         D: "Short to Int",
         Correct: "B"
-    },
-]
+    }
+];
+
 const len = questions.length;
 let arr = Array(len).fill(null);
-
 let count = 0, Result = 0;
+
 const clear = () => {
-    for (let i = 0; i < Answers.length; i++) {
-        Answers[i].classList.remove("correct", "wrong", "disable");
-    }
+    Answers.forEach(answer => {
+        answer.classList.remove("correct", "wrong", "disable");
+    });
 }
+
 const check_Answered = () => {
     if (arr[count] != null) {
         check(arr[count], arr[count].charCodeAt() - 65, "DoNotAddToResult");
-        return;
     }
 }
+
 const display = () => {
-    if (count === questions.length - 1) {
-        next.innerText = "submit";
-    } else {
-        next.innerText = "next";
-    }
-    if (count === questions.length) {
+    if (count >= questions.length) {
         show_frame.classList.remove('hide_frame');
+        print_result.innerText = `Your score is ${Result} out of ${questions.length}`;
         prev.classList.add('disable');
         next.classList.add('disable');
-        print_result.innerText = `You Score is ${Result} out of ${questions.length}`
-    }
-    else if (count < questions.length) {
+    } else {
         show_frame.classList.add('hide_frame');
         clear();
         ques.innerText = questions[count].question;
@@ -67,18 +64,16 @@ const display = () => {
         Answers[2].innerText = questions[count].C;
         Answers[3].innerText = questions[count].D;
         check_Answered();
-    }
 
+        next.innerText = count === questions.length - 1 ? "Submit" : "Next";
+    }
 }
+
 const check_prev = () => {
-    if (count === 0) {
-        prev.classList.add('disable');
-    }
-    else {
-        prev.classList.remove('disable');
-    }
+    prev.classList.toggle('disable', count === 0);
 }
-window.onload = () => { check_prev() };
+
+window.onload = () => { check_prev(); display(); };
 
 const check = (ans, ansIndex, CheckToAdd) => {
     if (questions[count].Correct === ans) {
@@ -86,46 +81,51 @@ const check = (ans, ansIndex, CheckToAdd) => {
         if (CheckToAdd === "AddToResult") {
             Result++;
         }
-    }
-    else {
+    } else {
         Answers[ansIndex].classList.add("wrong");
     }
-    console.log(arr);
-    for (let i = 0; i < 4; i++) {
-        if (i != ansIndex) {
-            Answers[i].classList.add("disable");
+
+    Answers.forEach((answer, index) => {
+        if (index !== ansIndex) {
+            answer.classList.add("disable");
         }
-    }
-    console.log(Result);
+    });
 }
+
 Answers.forEach(element => {
     element.addEventListener("click", () => {
-        arr[count] = element.value;
-        check(element.value, element.value.charCodeAt() - 65, "AddToResult");
-    })
+        if (arr[count] === null) { 
+            arr[count] = element.value;
+            check(element.value, element.value.charCodeAt() - 65, "AddToResult");
+        }
+    });
 });
 
-display();
-
 prev.addEventListener("click", () => {
-    count--;
-    check_prev();
-    display()
+    if (count > 0) {
+        count--;
+        check_prev();
+        display();
+    }
 });
 
 next.addEventListener("click", () => {
-    count++;
-    check_prev();
-    display();
+    if (count < questions.length - 1) {
+        count++;
+        check_prev();
+        display();
+    } else if (count === questions.length - 1) {
+        count++;
+        display(); 
+    }
 });
+
 Reset.addEventListener("click", () => {
     count = 0;
     Result = 0;
-    for(let i=0;i<len;i++){
-        arr[i] = null;
-    }
+    arr.fill(null);
     prev.classList.remove('disable');
     next.classList.remove('disable');
+    show_frame.classList.add('hide_frame');
     display();
 });
-

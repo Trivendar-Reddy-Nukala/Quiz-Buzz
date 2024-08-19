@@ -84,7 +84,6 @@ h2 {
 }
 
 .show_result {
-    display: none;
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -93,9 +92,8 @@ h2 {
 
 .hide_frame {
     display: none;
-}
+} 
 
-/* Responsive Design */
 @media screen and (max-width: 768px) {
     .OuterFrame {
         width: 80vw;
